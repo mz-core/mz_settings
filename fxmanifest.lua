@@ -3,7 +3,7 @@ game 'gta5'
 
 name 'mz_settings'
 description 'Configurações globais da cidade: IPL, NPCs, sons, tráfego, densidade e mundo.'
-author 'mz_core'
+author 'Mazus'
 version '1.0.0'
 
 lua54 'yes'
