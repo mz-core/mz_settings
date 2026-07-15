@@ -4,15 +4,35 @@ game 'gta5'
 name 'mz_settings'
 description 'Configurações globais da cidade: IPL, NPCs, sons, tráfego, densidade e mundo.'
 author 'Mazus'
-version '1.0.0'
+version '2.0.0'
 
 lua54 'yes'
 
-shared_scripts {
-  'config.lua'
-}
-
 client_scripts {
+  -- Configuração é client-only: nenhum bloco Config.* é consumido no server.
+  'config/shared.lua',
+  'config/ipl.lua',
+  'config/ipl_cayo.lua',
+
+  'config/ipl_catalog/base.lua',
+  'config/ipl_catalog/story.lua',
+  'config/ipl_catalog/services.lua',
+  'config/ipl_catalog/businesses.lua',
+  'config/ipl_catalog/criminal.lua',
+  'config/ipl_catalog/entertainment.lua',
+  'config/ipl_catalog/residences.lua',
+  'config/ipl_catalog/recent_dlc.lua',
+  'config/ipl_catalog/settings.lua',
+
+  'config/npc.lua',
+  'config/sound.lua',
+  'config/traffic.lua',
+  'config/peds.lua',
+  'config/world.lua',
+  'config/blocked_vehicles.lua',
+  'config/pickups.lua',
+  'config/plates.lua',
+
   'client/main.lua',
   'client/ipl.lua',
   'client/npc.lua',
