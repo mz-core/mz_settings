@@ -1,6 +1,6 @@
 Config.BlockedVehiclesCleanup = Config.BlockedVehiclesCleanup or {
   enabled = true,
-  intervalMs = 2000,
+  intervalMs = 1000,
   notifyDriver = true,
   notifyCooldownMs = 8000,
 
