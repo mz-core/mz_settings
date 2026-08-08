@@ -5,9 +5,26 @@ Config.IPL = Config.IPL or {
   loadMpDlcMaps = true,
   enableMpDlcMaps = true,
   externalLoader = 'native',
+  -- Compatibilidade entre builds. Em "auto", o client usa GetGameBuildNumber().
+  -- Use "manual" somente para testes; "off" restaura o comportamento legado.
+  compatibility = {
+    mode = 'auto',
+    manualBuild = nil,
+    skipUnsupported = true,
+    checkDlcPresence = true,
+    loadBuildFixes = true
+  },
+  -- Campo legado: se preenchido, funciona como manualBuild.
   serverGameBuild = nil,
   load = {},
   remove = {},
+
+  -- As mansões da build 3717 precisam alternar o mapa genérico por distância.
+  mansionLodFix = {
+    enabled = true,
+    distance = 200.0,
+    scanDelayMs = 1000
+  },
 
   groups = {
     legacy_cleanup = {
@@ -28,6 +45,18 @@ Config.IPL = Config.IPL or {
     map_fixes_story = {
       enabled = true,
       label = 'Correções base/story mode',
+      activeVariant = 'heist_normal',
+      overlapGroup = 'heist_apartment_state',
+      variants = {
+        heist_normal = {
+          load = { 'bnkheist_apt_norm' },
+          remove = { 'bnkheist_apt_dest' }
+        },
+        heist_destroyed = {
+          load = { 'bnkheist_apt_dest' },
+          remove = { 'bnkheist_apt_norm' }
+        }
+      },
       load = {
         'coronertrash', 'Coroner_Int_On', 'chop_props', 'rc12b_default',
         'CS1_02_cf_onmission1', 'CS1_02_cf_onmission2', 'CS1_02_cf_onmission3',
@@ -39,8 +68,6 @@ Config.IPL = Config.IPL or {
         'DT1_05_HC_REQ', 'DT1_05_REQUEST', 'scafendimap', 'ferris_finale_Anim',
         'des_stilthouse_rebuild', 'CS2_06_TriAf02', 'CS4_08_TriAf02',
         'CS4_04_TriAf03', 'AP1_04_TriAf01', 'cs5_4_trains', 'chophillskennel',
-        -- Estados possivelmente incompatíveis preservados para não mudar o mapa atual.
-        'bnkheist_apt_dest', 'bnkheist_apt_norm',
         'hei_sm_16_interior_v_bahama_milo_', 'cs3_05_water_grp1',
         'cs3_05_water_grp1_lod', 'cs3_05_water_grp2', 'cs3_05_water_grp2_lod',
         'canyonriver01', 'canyonriver01_lod', 'bh1_47_joshhse_unburnt',
@@ -55,11 +82,22 @@ Config.IPL = Config.IPL or {
     story_interiors = {
       enabled = true,
       label = 'Interiores story mode úteis',
+      activeVariant = 'trevor_trash',
+      overlapGroup = 'trevor_trailer_state',
+      variants = {
+        trevor_trash = {
+          load = { 'TrevorsTrailerTrash' },
+          remove = { 'TrevorsTrailerTidy' }
+        },
+        trevor_tidy = {
+          load = { 'TrevorsTrailerTidy' },
+          remove = { 'TrevorsTrailerTrash' }
+        }
+      },
       load = {
         'v_rockclub', 'v_carshowroom', 'shr_int', 'shutter_closed', 'FINBANK',
         'facelobby', 'FIBlobby', 'FBI_colPLUG', 'FBI_repair',
-        -- Conflito legado preservado; escolha de variante aguarda teste runtime.
-        'TrevorsMP', 'TrevorsTrailer', 'TrevorsTrailerTidy', 'TrevorsTrailerTrash',
+        'TrevorsMP', 'TrevorsTrailer',
         'V_Michael', 'V_Michael_Garage', 'V_Michael_FameShame',
         'V_Michael_JewelHeist', 'V_Michael_plane_ticket', 'V_Michael_Scuba'
       }
@@ -204,6 +242,7 @@ Config.IPL = Config.IPL or {
     cayo_submarine = {
       enabled = false,
       label = 'Interior submarino/Kosatka da Cayo',
+      gameBuild = 2189,
       coords = { x = 483.2, y = 4810.5, z = -58.9 },
       props = {
         'set_int_02_decal_01', 'set_int_02_lounge1', 'set_int_02_cannon',

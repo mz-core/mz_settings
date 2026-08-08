@@ -1,6 +1,6 @@
 local function add(key, entry)
   entry.enabled = false
-  entry.source = entry.source or 'Bob74 IPL 2.6.1'
+  entry.source = entry.source or 'Bob74 IPL 2.7.0'
   Config.RegisterIPLCatalog(key, entry)
 end
 

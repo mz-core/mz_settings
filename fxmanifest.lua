@@ -4,7 +4,7 @@ game 'gta5'
 name 'mz_settings'
 description 'Configurações globais da cidade: IPL, NPCs, sons, tráfego, densidade e mundo.'
 author 'Mazus'
-version '2.0.0'
+version '2.1.3'
 
 lua54 'yes'
 
@@ -13,6 +13,7 @@ client_scripts {
   'config/shared.lua',
   'config/ipl.lua',
   'config/ipl_cayo.lua',
+  'config/ipl_builds.lua',
 
   'config/ipl_catalog/base.lua',
   'config/ipl_catalog/story.lua',

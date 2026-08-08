@@ -1,6 +1,6 @@
 local function add(key, entry)
   entry.enabled = false
-  entry.source = entry.source or 'Bob74 IPL 2.6.1'
+  entry.source = entry.source or 'Bob74 IPL 2.7.0'
   Config.RegisterIPLCatalog(key, entry)
 end
 
@@ -77,7 +77,7 @@ add('criminal_enterprise_warehouse', {
 
 add('money_fronts_office', {
   label = 'Money Fronts Office', category = 'business.office', type = 'ipl_entitysets',
-  gameBuild = 3570, load = { 'm25_1_helitours', 'm25_1_smokeonthewater' },
+  gameBuild = 3570, dlcName = 'mp2025_01', load = { 'm25_1_helitours', 'm25_1_smokeonthewater' },
   interiorId = 298753,
   inside = { coords = vector4(-1160.493, -1538.932, -50.0, 0.0), comment = 'Interior / heading pendente de ajuste' },
   activeVariant = nil, overlapGroup = 'money_fronts_office_style',

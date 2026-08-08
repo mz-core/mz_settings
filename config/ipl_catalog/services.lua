@@ -1,6 +1,6 @@
 local function add(key, entry)
   entry.enabled = false
-  entry.source = entry.source or 'Bob74 IPL 2.6.1'
+  entry.source = entry.source or 'Bob74 IPL 2.7.0'
   Config.RegisterIPLCatalog(key, entry)
 end
 
@@ -12,7 +12,7 @@ local securityOffices = {
 }
 
 for _, data in ipairs(securityOffices) do
-  -- TP interno: coordenada confirmada na referência Bob74 2.6.1.
+  -- TP interno: coordenada confirmada na referência Bob74 2.7.0.
   add(data[1], {
     label = data[2], category = 'services.security', type = 'ipl_entitysets',
     gameBuild = 2545, load = { data[3] }, interiorId = data[4],

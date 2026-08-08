@@ -1,12 +1,40 @@
 Config.IPL = Config.IPL or {}
 Config.IPL.groups = Config.IPL.groups or {}
 
--- Migração literal da lista ativa original. Estados incompatíveis permanecem
--- temporariamente para preservar o visual até a validação em runtime.
+-- Lista original da ilha, com os estados incompatíveis movidos para variantes.
 Config.IPL.groups.cayo_perico = {
       enabled = true,
       label = 'Cayo Perico / Heist Island',
+      gameBuild = 2189,
       description = 'Ilha completa da Cayo Perico. Pesado; ative junto com cayoRadar se quiser minimapa correto.',
+      activeVariant = 'secured',
+      overlapGroup = 'cayo_access_state',
+      variants = {
+        secured = {
+          load = {
+            'h4_mansion_gate_closed',
+            'h4_islandairstrip_doorsclosed',
+            'h4_islandairstrip_doorsclosed_lod'
+          },
+          remove = {
+            'h4_mansion_gate_broken',
+            'h4_islandairstrip_doorsopen',
+            'h4_islandairstrip_doorsopen_lod'
+          }
+        },
+        breached = {
+          load = {
+            'h4_mansion_gate_broken',
+            'h4_islandairstrip_doorsopen',
+            'h4_islandairstrip_doorsopen_lod'
+          },
+          remove = {
+            'h4_mansion_gate_closed',
+            'h4_islandairstrip_doorsclosed',
+            'h4_islandairstrip_doorsclosed_lod'
+          }
+        }
+      },
       load = {
         'h4_mph4_terrain_occ_09',
         'h4_mph4_terrain_occ_06',
@@ -158,7 +186,6 @@ Config.IPL.groups.cayo_perico = {
         'h4_islandx_mansion_lockup_02',
         'h4_islandx_mansion_slod',
         'h4_sw_ipl_07_lod',
-        'h4_islandairstrip_doorsclosed_lod',
         'h4_sw_ipl_02_lod',
         'h4_se_ipl_04_slod',
         'h4_islandx_checkpoint_props_lod',
@@ -214,10 +241,8 @@ Config.IPL.groups.cayo_perico = {
         'h4_islandx_mansion_b_lod',
         'h4_ne_ipl_08',
         'h4_islandxdock_props',
-        'h4_islandairstrip_doorsopen_lod',
         'h4_se_ipl_05_lod',
         'h4_islandxcanal_props_slod',
-        'h4_mansion_gate_closed',
         'h4_se_ipl_02_slod',
         'h4_nw_ipl_02',
         'h4_ne_ipl_08_lod',
@@ -232,7 +257,6 @@ Config.IPL.groups.cayo_perico = {
         'h4_beach_props_slod',
         'h4_underwater_gate_closed',
         'h4_ne_ipl_00_lod',
-        'h4_islandairstrip_doorsopen',
         'h4_sw_ipl_01_slod',
         'h4_se_ipl_00',
         'h4_se_ipl_06',
@@ -249,7 +273,6 @@ Config.IPL.groups.cayo_perico = {
         'h4_islandxdock_props_lod',
         'h4_beach_party',
         'h4_nw_ipl_06_slod',
-        'h4_islandairstrip_doorsclosed',
         'h4_nw_ipl_00_lod',
         'h4_ne_ipl_02',
         'h4_islandxdock_slod',
@@ -296,7 +319,6 @@ Config.IPL.groups.cayo_perico = {
         'h4_mph4_mansion_strm_0',
         'h4_nw_ipl_02_slod',
         'h4_mph4_airstrip',
-        'h4_mansion_gate_broken',
         'h4_island_padlock_props',
         'h4_islandairstrip_props_slod',
         'h4_nw_ipl_06',

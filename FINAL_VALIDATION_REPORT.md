@@ -1,5 +1,27 @@
 # Relatório final — refatoração do mz_settings
 
+## Atualização de compatibilidade — 31/07/2026
+
+Esta seção substitui os números e o comportamento de build descritos no
+relatório histórico abaixo:
+
+- referência técnica atualizada de Bob74 IPL 2.6.1 para 2.7.0;
+- detecção automática por `GetGameBuildNumber()` e, nos DLCs recentes,
+  confirmação adicional por `IsDlcPresent`;
+- grupos, catálogo, interiores e pacotes acima da build atual são ignorados
+  antes de `RequestIpl` ou da aplicação de entity sets;
+- nove pacotes automáticos de correção cobrem as builds 2189 a 3889;
+- catálogo ampliado para 143 entradas, incluindo Money Fronts, mansões,
+  basements e The Kortz Center Heist;
+- `settings.lua` foi reduzido a uma allowlist curta e preserva a única entrada
+  opcional anteriormente ativa (`tuner_garage`);
+- estados conflitantes do apartamento do heist, trailer do Trevor e Cayo foram
+  convertidos em variantes exclusivas com defaults explícitos;
+- correção de culling das mansões 3717 incorporada: o mapa genérico é removido
+  dentro de 200 metros e restaurado ao afastar/parar o resource;
+- simulações aprovadas nas builds 1604, 2372 e 3889, sempre com `RequestIpl`
+  deduplicado e sem vazamento de IPLs de builds posteriores.
+
 ## Diagnóstico original
 
 O resource possuía um único `config.lua` de 1.201 linhas carregado como shared, embora nenhuma configuração fosse consumida no server. Os clients já estavam separados por responsabilidade. `client/ipl.lua` carregava/removia listas sem deduplicação, sem referência entre entradas, sem catálogo, sem variantes e sem `disableProps`. A configuração de placas estava hardcoded em `client/placa.lua`. O único export externo encontrado é o uso opcional de `mz_notify`; não havia banco, framework, dependência ou API do Bob74.
@@ -154,4 +176,6 @@ O validador cobre duplicações, load/remove, overlaps, variantes, tipos, coorde
 - reload de IPL, comandos de TP e entity sets;
 - variantes, colisões/LODs e conflitos com MLOs.
 
-Não houve migration de banco, NUI, framework, alteração de `sv_enforceGameBuild` ou nova dependência.
+Não houve migration de banco, NUI, framework ou nova dependência. O starter
+passou a impor `sv_enforceGameBuild 3751` para carregar o DLC `mp2025_02` das
+mansões; a troca exige reinicialização completa do servidor e reconexão do client.

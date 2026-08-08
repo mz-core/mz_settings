@@ -11,6 +11,7 @@ mz_settings/
 │   ├── shared.lua                Config, debug e registro do catálogo
 │   ├── ipl.lua                   Loader operacional e grupos legados
 │   ├── ipl_cayo.lua              Lista ativa original da Cayo
+│   ├── ipl_builds.lua            Correções automáticas por build/DLC
 │   ├── ipl_catalog/              Catálogo e settings.lua para ativações
 │   ├── npc.lua                   Cops, dispatch e wanted
 │   ├── sound.lua                 Rádio, cenas e zonas de áudio
@@ -63,25 +64,23 @@ Todas as entradas do catálogo começam com `enabled = false`. O catálogo só c
 
 ## Grupos legados e catálogo
 
-Para um grupo operacional existente:
+Todas as escolhas comuns ficam em `config/ipl_catalog/settings.lua`. Para um
+grupo pronto:
 
 ```lua
-Config.IPL.groups.ships.enabled = true
+Config.IPLSettings.groups.ships = true
 ```
 
-Para uma entrada independente do catálogo, edite somente
-`config/ipl_catalog/settings.lua`:
+Para entradas independentes do catálogo, liste apenas o que a cidade usa:
 
 ```lua
-Config.IPLCatalogSettings = {
-  cargo_ship_base = {
-    enabled = true,
-    variant = 'normal'
-  }
+Config.IPLSettings.catalog = {
+  tuner_garage = true,
+  cargo_ship_base = { enabled = true, variant = 'normal' }
 }
 ```
 
-Use `enabled = false` para desligar. Depois de salvar, execute
+Use `false` para desligar um grupo e remova/desative uma entrada opcional. Depois de salvar, execute
 `restart mz_settings`; `/mzsettings_reloadipl` não relê arquivos do disco.
 
 Entradas como `fib_lobby` possuem `managedBy = 'Config.IPL.groups.story_interiors'` e são apenas informativas: altere o grupo legado indicado para mudar a carga atual.
@@ -93,9 +92,8 @@ Não copie um mesmo IPL para o grupo legado e para outra entrada ativa. O loader
 Somente uma variante é considerada. Em `settings.lua`, use:
 
 ```lua
-cargo_ship_base = {
-  enabled = true,
-  variant = 'sunk'
+Config.IPLSettings.catalog.cargo_ship_base = {
+  enabled = true, variant = 'sunk'
 }
 ```
 
@@ -104,8 +102,9 @@ Internamente, `variant` configura `activeVariant`. Nunca escolha vários DJs, es
 O grupo `nightclub_cases` foi convertido em 50 variantes (`case0..9` × estado). Exemplo:
 
 ```lua
-Config.IPL.groups.nightclub_cases.enabled = true
-Config.IPL.groups.nightclub_cases.activeVariant = 'case0_forsale'
+Config.IPLSettings.groups.nightclub_cases = {
+  enabled = true, variant = 'case0_forsale'
+}
 ```
 
 Isso carrega apenas a barreira e o anúncio escolhidos, em vez de todos os DJs/estados.
@@ -124,17 +123,49 @@ Nenhum entity set novo está ativo por padrão. Confirme nomes e combinações e
 
 ## Game build
 
-Entradas de DLC possuem `gameBuild` apenas quando confirmado pela referência 2.6.1. `Config.IPL.serverGameBuild` é opcional:
+O modo padrão detecta a build real no client e ignora qualquer grupo, entrada,
+interior ou pacote que exija uma build maior. Não é necessário repetir
+`sv_enforceGameBuild` na configuração:
 
 ```lua
-Config.IPL.serverGameBuild = nil
+Config.IPLSettings.compatibility = {
+  mode = 'auto',             -- recomendado para produção
+  manualBuild = nil,         -- usado somente com mode = 'manual'
+  skipUnsupported = true,    -- nunca solicita IPL inexistente na build
+  checkDlcPresence = true,   -- confirma DLCs recentes com IsDlcPresent
+  loadBuildFixes = true      -- correções automáticas da build atual
+}
 ```
 
-Se preenchido, o validador avisa sobre uma entrada habilitada que exige build maior. O resource não altera nem tenta descobrir `sv_enforceGameBuild`.
+`config/ipl_builds.lua` contém os pequenos pacotes automáticos de correção do
+mapa, separados por build de 2189 a 3889. Uma build antiga recebe apenas os
+pacotes que conhece; uma build nova recebe também os pacotes anteriores. O
+resource não altera `sv_enforceGameBuild`. `serverGameBuild` continua aceito
+somente por compatibilidade com configurações antigas.
+
+O catálogo foi atualizado com Money Fronts, as três mansões e seus basements,
+e The Kortz Center Heist. Conteúdo recente também usa `dlcName`, evitando
+aplicar entity sets quando o DLC não estiver presente no client.
+
+As mansões das builds 3717/3751 aparecem explicitamente em `settings.lua`. Para
+utilizar uma delas, ative a mansão e o basement de mesmo número. Não é
+necessário procurar as chaves nos arquivos internos do catálogo.
+
+As versões acessíveis das mansões possuem LODs incompatíveis com os mapas
+genéricos do local. Com `mansionLodFix = true`, o resource só remove o IPL
+genérico depois de confirmar que a mansão acessível está ativa. Dentro de 200
+metros ele faz a troca; fora desse raio solicita explicitamente o mapa genérico,
+inclusive no primeiro scan, reproduzindo o handler do Bob74. Também restaura esse
+mapa ao encerrar o resource. Se a build, DLC ou artifact não fornecer a mansão,
+o resource remove o genérico incompleto e solicita as IPLs originais de terreno,
+props e LODs, evitando deixar somente a construção flutuando sobre um buraco.
 
 ## Cayo Perico
 
-O grupo `cayo_perico` e o radar continuam ativos. A lista original foi migrada literalmente. Ela contém estados incompatíveis, como portão fechado/quebrado e portas do hangar abertas/fechadas; isso é avisado pelo validador, mas não foi corrigido silenciosamente para preservar o mapa atual. A seleção final aguarda teste runtime.
+O grupo `cayo_perico` e o radar continuam ativos a partir da build 2189. Os
+estados incompatíveis deixaram de ser carregados juntos. Escolha `secured`
+(portão e hangar fechados, padrão) ou `breached` (portão quebrado e hangar
+aberto) em `Config.IPLSettings.groups.cayo_perico.variant`.
 
 ## Debug e teste
 
@@ -156,7 +187,7 @@ Para testar uma entrada: habilite somente ela (e sua variante, se existir), rein
 
 IPLs nativos podem conflitar com MLOs. Um PDM customizado, como uma instalação baseada no GABZ PDM, pode manter portas/colisões incompatíveis se o showroom nativo do Simeon continuar carregado. A remoção deve ser configuração explícita; o resource não tenta detectar MLOs automaticamente.
 
-`Config.IPL.externalLoader = 'native'` é o único modo implementado. Bob74 IPL 2.6.1 foi usado como referência técnica, não foi instalado nem adicionado como dependência. Se `bob74_ipl` já rodar no servidor, desative cargas duplicadas manualmente; este resource não chama exports externos não confirmados.
+`Config.IPL.externalLoader = 'native'` é o único modo implementado. [Bob74 IPL 2.7.0](https://github.com/Bob74/bob74_ipl) foi usado como referência técnica (licença MIT), mas não foi instalado nem virou dependência. Se `bob74_ipl` já rodar no servidor, desative cargas duplicadas manualmente; este resource não chama exports externos não confirmados.
 
 ## Adicionando uma entrada
 
